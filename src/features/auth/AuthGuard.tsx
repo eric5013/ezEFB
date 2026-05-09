@@ -7,10 +7,15 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) navigate('/login');
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+      }
       setLoading(false);
-    });
+    };
+
+    checkSession();
   }, []);
 
   if (loading) return <div className="text-white">Loading...</div>;

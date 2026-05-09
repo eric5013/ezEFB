@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
 
 import { supabase } from '@/lib/supabase';
 import { AuthGuard } from '@/features/auth/AuthGuard';
@@ -13,26 +12,25 @@ const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <SessionContextProvider supabaseClient={supabase}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/"
-              element={
-                <AuthGuard>
-                  <DashboardLayout />
-                </AuthGuard>
-              }
-            >
-              <Route index element={<Navigate to="/plans" replace />} />
-              <Route path="plans" element={<FlightPlanPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </SessionContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          
+          <Route
+            path="/"
+            element={
+              <AuthGuard>
+                <DashboardLayout />
+              </AuthGuard>
+            }
+          >
+            <Route index element={<Navigate to="/plans" replace />} />
+            <Route path="plans" element={<FlightPlanPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

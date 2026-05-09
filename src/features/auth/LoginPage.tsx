@@ -8,7 +8,10 @@ export const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) alert(error.message);
     else navigate('/');
   };
