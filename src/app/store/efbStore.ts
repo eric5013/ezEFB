@@ -1,21 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
-
-type Waypoint = {
-  id: string;
-  lat: number;
-  lon: number;
-  type: string;
-  notes?: string;
-  images?: string[];
-};
-
-type FlightPlan = {
-  id: string;
-  plan_key: string;
-  plan_name: string;
-  route_data: Waypoint[];
-};
+import { Waypoint, FlightPlan } from '@/app/types';
 
 type State = {
   plans: FlightPlan[];

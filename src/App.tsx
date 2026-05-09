@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
@@ -17,10 +17,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            {/* 登录页 */}
             <Route path="/login" element={<LoginPage />} />
-
-            {/* 主应用（受保护） */}
             <Route
               path="/"
               element={
@@ -39,14 +36,13 @@ export default function App() {
   );
 }
 
-/* =========================
-   飞行计划主页面
-========================= */
+// 飞行计划页面
 import { MapView } from '@/features/flight-plan/MapView';
 import { WaypointList } from '@/features/flight-plan/WaypointList';
 import { NotesPanel } from '@/features/notes/NotesPanel';
 import { TopBar } from '@/features/ui/TopBar';
 import { EfbButton } from '@/features/ui/EfbButton';
+import { Waypoint } from '@/app/types';
 
 function FlightPlanPage() {
   const {
@@ -59,14 +55,13 @@ function FlightPlanPage() {
 
   const [selectedWaypointIndex, setSelectedWaypointIndex] = useState<number>(0);
 
+  if (!currentPlan) return <div className="text-white p-4">请选择一个飞行计划</div>;
+
   return (
     <div className="h-screen w-screen flex flex-col bg-neutral-900 text-white overflow-hidden">
-      {/* 顶部栏 */}
       <TopBar />
-
-      {/* 主体 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* 左侧：飞行计划列表 */}
+        {/* 左侧 */}
         <aside className="w-80 bg-neutral-800 border-r border-neutral-700 flex flex-col">
           <div className="p-4 border-b border-neutral-700">
             <select
@@ -80,7 +75,6 @@ function FlightPlanPage() {
                 </option>
               ))}
             </select>
-
             <EfbButton
               className="mt-4 w-full"
               onClick={() => {
@@ -91,42 +85,30 @@ function FlightPlanPage() {
               ➕ 新建计划
             </EfbButton>
           </div>
-
-          {currentPlan && (
-            <WaypointList
-              waypoints={currentPlan.route_data}
-              selectedIndex={selectedWaypointIndex}
-              onSelect={setSelectedWaypointIndex}
-            />
-          )}
+          <WaypointList
+            waypoints={currentPlan.route_data}
+            selectedIndex={selectedWaypointIndex}
+            onSelect={setSelectedWaypointIndex}
+          />
         </aside>
 
-        {/* 中间：地图 */}
+        {/* 地图 */}
         <main className="flex-1 relative">
-          {currentPlan && (
-            <MapView
-              waypoints={currentPlan.route_data}
-              selectedIndex={selectedWaypointIndex}
-              onSelect={setSelectedWaypointIndex}
-            />
-          )}
+          <MapView
+            waypoints={currentPlan.route_data}
+            selectedIndex={selectedWaypointIndex}
+            onSelect={setSelectedWaypointIndex}
+          />
         </main>
 
-        {/* 右侧：笔记 */}
+        {/* 右侧 */}
         <aside className="w-96 bg-neutral-800 border-l border-neutral-700">
-          {currentPlan && (
-            <NotesPanel
-              waypoint={currentPlan.route_data[selectedWaypointIndex]}
-              onChange={(notes, images) => {
-                updateWaypointNotes(
-                  currentPlan.id,
-                  selectedWaypointIndex,
-                  notes,
-                  images
-                );
-              }}
-            />
-          )}
+          <NotesPanel
+            waypoint={currentPlan.route_data[selectedWaypointIndex]}
+            onChange={(notes, images) => {
+              updateWaypointNotes(currentPlan.id, selectedWaypointIndex, notes, images);
+            }}
+          />
         </aside>
       </div>
     </div>
